@@ -24,4 +24,7 @@ class PegenException:
         self.type: ExceptionType = type
 
     def __str__(self):
-        return str(self.type) % dict(node=self.token.string)
+        if self.token is not None:
+            return str(self.type) % dict(node=self.token.string)
+        else:
+            return str(self.type)
