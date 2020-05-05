@@ -1,5 +1,5 @@
 from toylepegen.memo import memoize
-from toylepegen.exceptions import PegenException
+from toylepegen.exceptions import PegenException, ExceptionType
 
 class Parser:
 
@@ -26,7 +26,6 @@ class Parser:
             vis.show_index(alt_index, item_index, num_items)
         return True
 
-    @memoize
     def expect(self, arg):
         token = self.tokenizer.peek_token()
         if token.type == arg or token.string == arg:
@@ -50,6 +49,8 @@ class Parser:
         return ok == positive
 
     def raise_exception(self, exception):
+        if self.error.type != ExceptionType.OK:
+            return # Only raise, if no exception is set
         self.error = PegenException(
             token=self.tokenizer.tokens[self.tokenizer.pos],
             type=exception
@@ -59,6 +60,7 @@ class Parser:
         mark = self.mark()
         if self.error.type in exceptions:
             if node := func(*args) is not None:
+                self.error = PegenException() # Clear error
                 return node
         self.reset(mark)
         return None

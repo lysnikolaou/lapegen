@@ -33,11 +33,12 @@ def main():
         print(tree)
     else:
         if p.error.type != ExceptionType.OK:
-            last = tok.tokens[-1]
             print(f"Line {p.error.line}:")
             print(p.error.token.line)
             print(" "*p.error.col + "^")
             print(f"SyntaxError: {p.error}")
+        else:
+            print("SyntaxError: invalid syntax")
         sys.exit(1)
 
 

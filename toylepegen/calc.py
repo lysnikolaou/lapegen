@@ -25,24 +25,11 @@ class CalcParser(Parser):
         pos = self.mark()
         if (True
             and (expr := self.expr()) is not None
-            and (newline := self.newline()) is not None
+            and (newline := self.expect(NEWLINE)) is not None
         ):
             retval = expr
             if retval is not None:
                 return retval
-        self.reset(pos)
-        return None
-
-    def newline(self):
-        pos = self.mark()
-        if (True
-            and self.expect(NEWLINE) is not None
-        ):
-            return NEWLINE
-        self.reset(pos)
-        if (True):
-            self.raise_exception(ExceptionType.NoNewline)
-            return None
         self.reset(pos)
         return None
 
@@ -152,7 +139,7 @@ class CalcParser(Parser):
         cut = False
         if (True
             and (atom := self.atom()) is not None
-            and self.factor_operator() is not None
+            and self.expect('**') is not None
             and (factor := self.factor()) is not None
         ):
             retval = atom ** factor
@@ -162,26 +149,11 @@ class CalcParser(Parser):
         if cut:
             return None
         if (True
-            and (atom := self.catch_exceptions(ExceptionType.InvalidOperator, self.atom)) is not None 
+            and (atom := self.atom()) is not None 
         ):
             retval = atom
             if retval is not None:
                 return retval
-        self.reset(pos)
-        return None
-
-    def factor_operator(self):
-        pos = self.mark()
-        cut = False
-        if (True
-            and self.expect('**') is not None
-        ):
-            retval = '**'
-            return retval
-        self.reset(pos)
-        if (True):
-            self.raise_exception(ExceptionType.InvalidOperator)
-            return None
         self.reset(pos)
         return None
 

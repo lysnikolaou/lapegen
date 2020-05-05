@@ -5,8 +5,6 @@ from enum import Enum
 class ExceptionType:
     OK = 'No Error'
     InvalidAtom = 'An invalid atom was parsed: %(node)s'
-    InvalidOperator = 'An invalid operator was parsed: %(node)s'
-    NoNewline = 'Expected NEWLINE, parsed %(node)s instead'
 
     def __str__(self):
         return self.value

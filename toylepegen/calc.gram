@@ -1,7 +1,5 @@
-@subheader "from ast import literal_eval\n"
-
 start: expr_stmt* ENDMARKER
-expr_stmt: expr (NEWLINE | ^NoNewline)
+expr_stmt: expr NEWLINE
 
 expr:
   | expr '+' ~ term
@@ -17,11 +15,11 @@ term:
   | factor
 
 factor:
-  | atom ('**' | ^InvalidOperator) ~ factor
-  | ^(InvalidOperator) atom
+  | atom '**' ~ factor
+  | atom
 
 atom:
   | STRING
   | NUMBER
-  | '(' ~ expr ')'
+  | '(' ~ expr (')' | ^ParenNotClosing)
   | ^IvalidAtom
