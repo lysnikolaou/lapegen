@@ -36,13 +36,13 @@ class CalcParser(Parser):
     def newline(self):
         pos = self.mark()
         if (True
-            and (newline := self.expect(NEWLINE)) is not None
+            and self.expect(NEWLINE) is not None
         ):
-            retval = NEWLINE
-            return retval
+            return NEWLINE
         self.reset(pos)
         if (True):
             self.raise_exception(ExceptionType.NoNewline)
+            return None
         self.reset(pos)
         return None
 
