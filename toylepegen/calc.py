@@ -139,7 +139,7 @@ class CalcParser(Parser):
         cut = False
         if (True
             and (atom := self.atom()) is not None
-            and self.expect('**') is not None
+            and self.factor_operator() is not None
             and (factor := self.factor()) is not None
         ):
             retval = atom ** factor
@@ -149,11 +149,24 @@ class CalcParser(Parser):
         if cut:
             return None
         if (True
-            and (atom := self.atom()) is not None 
+            and (atom := self.catch_exceptions(ExceptionType.InvalidOperator, self.atom)) is not None
         ):
             retval = atom
             if retval is not None:
                 return retval
+        self.reset(pos)
+        return None
+
+    def factor_operator(self):
+        pos = self.mark()
+        if (True
+            and self.expect('**')
+        ):
+            return '**'
+        self.reset(pos)
+        if (True):
+            self.raise_exception(ExceptionType.InvalidOperator)
+            return None
         self.reset(pos)
         return None
 

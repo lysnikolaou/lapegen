@@ -53,6 +53,7 @@ class Parser:
             return # Only raise, if no exception is set
         self.error = PegenException(
             token=self.tokenizer.tokens[self.tokenizer.pos],
+            pos=self.tokenizer.pos,
             type=exception
         )
 
@@ -60,7 +61,8 @@ class Parser:
         mark = self.mark()
         if self.error.type in exceptions:
             if node := func(*args) is not None:
-                self.error = PegenException() # Clear error
+                if self.tokenizer.pos > self.error.pos:
+                    self.error = PegenException()
                 return node
         self.reset(mark)
         return None

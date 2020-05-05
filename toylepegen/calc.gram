@@ -15,11 +15,11 @@ term:
   | factor
 
 factor:
-  | atom '**' ~ factor
-  | atom
+  | atom ('**' | ^InvalidOperator) ~ factor
+  | (^InvalidOperator) atom
 
 atom:
   | STRING
   | NUMBER
-  | '(' ~ expr (')' | ^ParenNotClosing)
+  | '(' ~ expr ')'
   | ^IvalidAtom
