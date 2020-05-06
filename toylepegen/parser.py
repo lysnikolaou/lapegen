@@ -1,3 +1,5 @@
+from typing import List
+
 from toylepegen.memo import memoize
 from toylepegen.exceptions import PegenException, ExceptionType
 
@@ -6,7 +8,7 @@ class Parser:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
         self.memos = {}
-        self.error = PegenException()
+        self.error_stack: List[PegenException] = []
 
     def mark(self):
         return self.tokenizer.mark()
@@ -48,21 +50,24 @@ class Parser:
         self.reset(mark)
         return ok == positive
 
-    def raise_exception(self, exception):
-        if self.error.type != ExceptionType.OK:
-            return # Only raise, if no exception is set
-        self.error = PegenException(
-            token=self.tokenizer.tokens[self.tokenizer.pos],
-            pos=self.tokenizer.pos,
-            type=exception
+    def throw(self, exception):
+        self.error_stack.append(
+            PegenException(
+                token=self.tokenizer.tokens[self.tokenizer.pos],
+                pos=self.tokenizer.pos,
+                type=exception
+            )
         )
 
-    def catch_exceptions(self, exceptions, func, *args):
+    def catch(self, exceptions, func, *args):
         mark = self.mark()
-        if self.error.type in exceptions:
-            if node := func(*args) is not None:
-                if self.tokenizer.pos > self.error.pos:
-                    self.error = PegenException()
-                return node
+        types = [error.type for error in self.error_stack]
+        if any(exception in types for exception in exceptions):
+            while True:
+                if ((error := self.error_stack.pop())
+                    and error.type in exceptions
+                    and (node := func(*args) is not None)
+                ):
+                    return node
         self.reset(mark)
         return None

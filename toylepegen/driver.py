@@ -32,11 +32,13 @@ def main():
     if tree:
         print(tree)
     else:
-        if p.error.type != ExceptionType.OK:
-            print(f"Line {p.error.line}:")
-            print(p.error.token.line)
-            print(" "*p.error.col + "^")
-            print(f"SyntaxError: {p.error}")
+        if p.error_stack:
+            print(f"Numer of errors: {len(p.error_stack)}")
+            error = p.error_stack[0]
+            print(f"Line {error.line}:")
+            print(error.token.line)
+            print(" "*error.col + "^")
+            print(f"SyntaxError: {error}")
         else:
             print("SyntaxError: invalid syntax")
         sys.exit(1)

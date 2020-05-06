@@ -149,7 +149,7 @@ class CalcParser(Parser):
         if cut:
             return None
         if (True
-            and (atom := self.catch_exceptions(ExceptionType.InvalidOperator, self.atom)) is not None
+            and (atom := self.catch((ExceptionType.InvalidOperator,), self.atom)) is not None
         ):
             retval = atom
             if retval is not None:
@@ -165,7 +165,7 @@ class CalcParser(Parser):
             return '**'
         self.reset(pos)
         if (True):
-            self.raise_exception(ExceptionType.InvalidOperator)
+            self.throw(ExceptionType.InvalidOperator)
             return None
         self.reset(pos)
         return None
@@ -197,7 +197,7 @@ class CalcParser(Parser):
                 return retval
         self.reset(pos)
         if (True):
-            self.raise_exception(ExceptionType.InvalidAtom)
+            self.throw(ExceptionType.InvalidAtom)
             return None
         self.reset(pos)
         if cut:
