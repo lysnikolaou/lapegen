@@ -1,4 +1,4 @@
-# lapegen
+# lepegen
 Pegen with labeled exceptions - A small experiment
 
 This is a small experiment, where we try out various things on how to implement labeled
